@@ -1,7 +1,7 @@
 #ifndef WORD_H
 #define WORD_H
 
-#define LINE_LEN        100
+#define LINE_LEN        1000
 #define WORD_MAX_LEN	100
 #define MAX_W           100
 #define MAX_STOP_W      100
