@@ -311,11 +311,16 @@ void compileStatements(void) {
 
 void compileStatements2(void) {
   // TODO
-  if(lookAhead->tokenType == SB_SEMICOLON)
+  if(lookAhead->tokenType != KW_END)
   {
-    eat(SB_SEMICOLON);
-    compileStatement();
-    compileStatements2();
+    if(lookAhead->tokenType == SB_SEMICOLON)
+    {
+      eat(SB_SEMICOLON);
+      compileStatement();
+      compileStatements2();
+    }
+    else
+      missingToken(SB_SEMICOLON, lookAhead->lineNo, lookAhead->colNo);
   }
 }
 
@@ -490,6 +495,8 @@ void compileExpression(void) {
     case SB_MINUS:
       eat(SB_MINUS);
       break;
+    default:
+      break;
   }
   compileExpression2();
 
@@ -517,6 +524,8 @@ void compileExpression3(void) {
       compileTerm();
       compileExpression3();
       break;
+    default:
+      break;
   }
   
 }
@@ -540,6 +549,8 @@ void compileTerm2(void) {
       eat(SB_SLASH);
       compileFactor();
       compileTerm2();
+      break;
+    default:
       break;
   }
 }
