@@ -41,8 +41,7 @@ int main() {
   obj->varAttrs->type = makeArrayType(10,makeArrayType(10,makeIntType()));
   declareObject(obj);
 
-  Object* func;
-  func = obj = createFunctionObject("f");
+  obj = createFunctionObject("f");
   obj->funcAttrs->returnType = makeIntType();
   declareObject(obj);
   
