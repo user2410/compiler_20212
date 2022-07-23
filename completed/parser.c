@@ -790,6 +790,16 @@ Type* compileTerm2(Type* argType1) {
 
     resultType = compileTerm2(argType1);
     break;
+  case SB_POW:
+    eat(SB_POW);
+    checkIntType(argType1);
+    argType2 = compileFactor();
+    checkIntType(argType2);
+
+    genPOW();
+    
+    resultType = compileTerm2(argType1);
+    break;
     // check the FOLLOW set
   case SB_PLUS:
   case SB_MINUS:

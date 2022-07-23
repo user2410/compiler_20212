@@ -208,6 +208,24 @@ int run(void) {
 	else stack[t] /= stack[t+1];
       }
       break;
+    case OP_POW:
+      t--;
+      if(checkStack()){
+        if(stack[t+1] < 0)
+          ps = PS_POW_LT_ZERO;
+        else{
+          int a = stack[t];
+          int b = stack[t+1];
+          int res = 1;
+          while(b>0){
+            if(b&1) res = res*a;
+            a = a*a;
+            b = b>>1;
+          }
+          stack[t] = res;
+        }
+      }
+      break;
     case OP_NEG:
       stack[t] = - stack[t];
       break;

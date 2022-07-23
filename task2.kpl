@@ -1,0 +1,13 @@
+Program Task2;
+
+Var n: Integer;
+	x: Integer;
+
+Begin
+	n := READI;
+	If n<32 Then
+		Begin
+			x := 2**n;
+			CALL WRITEI(x);
+		End;
+End.
