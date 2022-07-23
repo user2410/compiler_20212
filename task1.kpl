@@ -1,0 +1,29 @@
+Program Task1;
+
+Var n: Integer;
+	a: Integer;
+	res: Integer;
+
+Function mod2(n: Integer): Integer;
+	Var tmp : Integer;
+	Begin
+		tmp := n/2;
+		tmp := tmp*2;
+		If tmp=n Then mod2:=0 Else mod2:=1;
+	End;
+
+Begin
+	a := 2;
+	res := 1;
+	n := READI;
+	IF n<32 THEN
+		BEGIN
+			WHILE n>0 DO
+				BEGIN
+					IF mod2(n)=1 THEN res := res*a;
+					a := a*a;
+					n := n/2;
+				END;
+			CALL WRITEI(res);
+		END;
+End.
