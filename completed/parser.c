@@ -437,8 +437,42 @@ Type* compileLValue(void) {
   return varType;
 }
 
+Type* _compileLValue(Token* token) {
+  Object* var;
+  Type* varType;
+
+  var = checkDeclaredLValueIdent(token->string);
+
+  switch (var->kind) {
+  case OBJ_VARIABLE:
+    genVariableAddress(var);
+
+    if (var->varAttrs->type->typeClass == TP_ARRAY) {
+      varType = compileIndexes(var->varAttrs->type);
+    }
+    else
+      varType = var->varAttrs->type;
+    break;
+  case OBJ_PARAMETER:
+    if (var->paramAttrs->kind == PARAM_VALUE)
+      genParameterAddress(var);
+    else genParameterValue(var);
+
+    varType = var->paramAttrs->type;
+    break;
+  case OBJ_FUNCTION:
+    genReturnValueAddress(var);
+    varType = var->funcAttrs->returnType;
+    break;
+  default: 
+    error(ERR_INVALID_LVALUE,token->lineNo, token->colNo);
+  }
+
+  return varType;
+}
+
 struct lrvalue{
-  Type* lvalue;
+  Token lvalue;
   struct lrvalue* next;
 };
 
@@ -457,29 +491,31 @@ void compileAssignSt(void) {
     genST();
   }
   else if(lookAhead->tokenType == SB_COMMA){
-    // eat(SB_COMMA);
     lrvalue* root = (lrvalue*)malloc(sizeof(lrvalue));
-    root->lvalue = varType;
+    root->lvalue = *currentToken;
     root->next = NULL;
 
     lrvalue* cur = root;
+    lrvalue* temp;
+
     while(lookAhead->tokenType != SB_EQ){
       eat(SB_COMMA);
-      lrvalue* temp = (lrvalue*)malloc(sizeof(lrvalue));
-      temp->lvalue = compileLValue();
+      eat(TK_IDENT);
+      temp = (lrvalue*)malloc(sizeof(lrvalue));
+      temp->lvalue = *currentToken;
       temp->next = NULL;
       cur->next = temp;
       cur = temp;
     }
-
     eat(SB_EQ);
 
     cur = root;
     while(1){
+      varType = _compileLValue(&(cur->lvalue));
       expType = compileExpression();
-      checkTypeEquality(cur->lvalue, expType);
+      checkTypeEquality(varType, expType);
       genST();
-      lrvalue* temp = cur;
+      temp = cur;
       cur = cur->next;
       free(temp);
       if(cur)
