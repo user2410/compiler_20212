@@ -1,0 +1,12 @@
+Program Task2;
+
+VAR x: Integer;
+
+BEGIN
+	x:=0;
+	WHILE x<3 DO
+		BEGIN
+			x:=x+1;
+			CALL WRITEI(x);
+		END;
+END.
