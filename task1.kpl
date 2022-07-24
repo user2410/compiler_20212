@@ -1,0 +1,16 @@
+Program Example1;
+
+Var a: Integer;
+	b: Integer;
+
+Begin
+	a := READI;
+	b := READI;
+	CALL WRITEI(a);
+	CALL WRITEC(' ');
+	CALL WRITEI(b);
+	a,b = a+2, b+3;
+	CALL WRITEI(a);
+	CALL WRITEC(' ');
+	CALL WRITEI(b);
+End.

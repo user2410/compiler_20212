@@ -437,17 +437,56 @@ Type* compileLValue(void) {
   return varType;
 }
 
+struct lrvalue{
+  Type* lvalue;
+  struct lrvalue* next;
+};
+
+typedef struct lrvalue lrvalue;
+
 void compileAssignSt(void) {
   Type* varType;
   Type* expType;
 
   varType = compileLValue();
   
-  eat(SB_ASSIGN);
-  expType = compileExpression();
-  checkTypeEquality(varType, expType);
+  if(lookAhead->tokenType == SB_ASSIGN){
+    eat(SB_ASSIGN);
+    expType = compileExpression();
+    checkTypeEquality(varType, expType);
+    genST();
+  }
+  else if(lookAhead->tokenType == SB_COMMA){
+    // eat(SB_COMMA);
+    lrvalue* root = (lrvalue*)malloc(sizeof(lrvalue));
+    root->lvalue = varType;
+    root->next = NULL;
 
-  genST();
+    lrvalue* cur = root;
+    while(lookAhead->tokenType != SB_EQ){
+      eat(SB_COMMA);
+      lrvalue* temp = (lrvalue*)malloc(sizeof(lrvalue));
+      temp->lvalue = compileLValue();
+      temp->next = NULL;
+      cur->next = temp;
+      cur = temp;
+    }
+
+    eat(SB_EQ);
+
+    cur = root;
+    while(1){
+      expType = compileExpression();
+      checkTypeEquality(cur->lvalue, expType);
+      genST();
+      lrvalue* temp = cur;
+      cur = cur->next;
+      free(temp);
+      if(cur)
+        eat(SB_COMMA);
+      else break;
+    }
+  }
 }
 
 void compileCallSt(void) {
